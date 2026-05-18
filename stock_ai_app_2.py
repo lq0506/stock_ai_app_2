@@ -11,6 +11,16 @@ import streamlit as st
 SEQ_WINDOW = 15
 today = datetime.today().strftime("%Y-%m-%d")
 
+# ===================== 隐藏右上角菜单 + 隐藏底部水印 =====================
+hide_streamlit_style = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    </style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 def get_code(code):
     if len(code) != 6:
         return ""
@@ -288,7 +298,7 @@ def main():
         df_result["MACD"] = df_result.apply(get_macd, axis=1)
         df_result["MA趋势"] = df_result.apply(get_ma, axis=1)
 
-        # ===================== ✅ 在 Streamlit 界面中显示最近10天明细 =====================
+        # ===================== 显示最近10天明细 =====================
         st.markdown("---")
         st.subheader("📋 最近10天历史明细")
         st.text("=" * 140)
@@ -302,7 +312,7 @@ def main():
 
         st.code("\n".join(table_lines))
 
-        # ===================== 以下是界面输出 =====================
+        # ===================== 界面输出 =====================
         progress_text.text("✅ 分析完成！")
         progress_bar.progress(100)
         st.success("所有指标计算+AI预测完成")
