@@ -22,6 +22,22 @@ footer {visibility: hidden;}
 /* 彻底移除所有侧边残留、底部留白 */
 .viewerBadge_container {display:none !important;}
 .css-164nlkn {display:none !important;}
+
+/* 强制隐藏所有 Median 自带的悬浮按钮、水印、皇冠 */
+div[class*="median-"],
+div[id*="median-"],
+div[class*="floating"],
+div[class*="premium"],
+div[class*="badge"],
+div[class*="watermark"] {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
 </style>
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
