@@ -7,6 +7,26 @@ from sklearn.preprocessing import StandardScaler
 from datetime import datetime
 import streamlit as st
 
+# 全局隐藏所有右下角多余元素 + 顶部默认菜单
+hide_streamlit_style = """
+<style>
+/* 隐藏右下角运行提示水印 */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+/* 隐藏右下角部署、关于按钮 */
+.stDeployButton {display:none !important;}
+/* 隐藏右下角问号帮助图标 */
+.stHelpButton {display:none !important;}
+/* 隐藏右下角设置三点菜单 */
+.stActionButton {display:none !important;}
+/* 彻底移除所有侧边残留、底部留白 */
+.viewerBadge_container {display:none !important;}
+.css-164nlkn {display:none !important;}
+</style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
+
 # ===================== 全局配置 =====================
 SEQ_WINDOW = 15
 today = datetime.today().strftime("%Y-%m-%d")
@@ -139,8 +159,8 @@ def get_ma(row):
 
 # ===================== 手机APP界面 =====================
 def main():
-    st.set_page_config(page_title="AI股票预测", page_icon="📈")
-    st.title("📈 AI五大指标股票预测APP")
+    st.set_page_config(page_title="股票预测", page_icon="📈")
+    st.title("📈 金融指标股票预测APP")
     st.divider()
 
     stock_code = st.text_input("请输入6位股票代码", value="603629")
@@ -156,7 +176,7 @@ def main():
         progress_bar = st.progress(0)
 
         # 1.登录接口
-        progress_text.text("正在登录行情接口...")
+        progress_text.text("正在获取股票行情...")
         progress_bar.progress(10)
         bs.login()
 
@@ -178,7 +198,7 @@ def main():
         df["date"] = pd.to_datetime(df["date"])
         df = df.sort_values("date").reset_index(drop=True)
 
-        progress_text.text("正在下载历史K线数据...")
+        progress_text.text("正在获取历史K线数据...")
         progress_bar.progress(25)
 
         # 数据清洗
@@ -251,7 +271,7 @@ def main():
         df["label_in"] = ((df["consec_up"]>=2)|(df["gap_up"]>3)|((df["ret"]>0.01)&(df["vol_ratio"]>1.05))).astype(int)
 
         # 模型
-        progress_text.text("模型训练与预测中...")
+        progress_text.text("数据获取分析中...")
         progress_bar.progress(80)
 
         scaler = StandardScaler()
@@ -301,9 +321,9 @@ def main():
         # ===================== 显示最近10天明细 =====================
         st.markdown("---")
         st.subheader("📋 最近10天历史明细")
-        st.text("=" * 140)
+        st.text("=" * 80)
         st.text(f"【{stock_sym} 五大指标+资金融合预测系统】")
-        st.text("=" * 140)
+        st.text("=" * 80)
 
         table_lines = []
         for _, row in df_result.tail(10).iterrows():
@@ -315,7 +335,7 @@ def main():
         # ===================== 界面输出 =====================
         progress_text.text("✅ 分析完成！")
         progress_bar.progress(100)
-        st.success("所有指标计算+AI预测完成")
+        # st.success("所有指标预测完成")
 
         # 展示结果
         latest = df_result.iloc[-1]
