@@ -9,23 +9,38 @@ import streamlit as st
 
 st.set_page_config(page_title="金融指标股票分析", layout="wide")
 
-# 终极隐藏：不依赖固定类名，直接干掉所有 Streamlit 品牌控件
-hide_all_streamlit_branding = """
-<style>
-/* 1. 隐藏所有右下角固定定位的元素 */
-div[style*="position: fixed"][style*="right: 0"][style*="bottom: 0"],
-div[style*="position:fixed"][style*="right:0"][style*="bottom:0"],
+# 终极方案：JS 直接删除元素 + CSS 兜底
+hide_streamlit_branding = """
+<script>
+// 等页面加载完成后执行
+window.addEventListener('load', function() {
+    // 循环查找并删除 Streamlit 品牌元素
+    function removeStreamlitBranding() {
+        // 匹配 profileContainer 和 viewerBadge
+        const badElements = document.querySelectorAll('[class*="profileContainer"], [class*="viewerBadge"]');
+        badElements.forEach(el => el.remove());
 
-/* 2. 隐藏所有包含 profileContainer / viewerBadge 字样的元素 */
+        // 匹配固定在右下角的所有元素
+        const fixedElements = document.querySelectorAll('div[style*="position: fixed"][style*="right: 0"][style*="bottom: 0"]');
+        fixedElements.forEach(el => el.remove());
+    }
+
+    // 立即执行一次
+    removeStreamlitBranding();
+    // 再每 100ms 执行一次，防止动态重新生成
+    setInterval(removeStreamlitBranding, 100);
+});
+</script>
+
+<style>
+/* 兜底：就算 JS 没删到，也强制隐藏 */
 div[class*="profileContainer"],
 div[class*="viewerBadge"],
-a[class*="viewerBadge"],
-
-/* 3. 兜底：隐藏所有可能的 Streamlit 装饰元素 */
-[data-testid="stDecoration"],
-[data-testid="stToolbar"],
+div[style*="position: fixed"][style*="right: 0"][style*="bottom: 0"],
 #MainMenu,
-footer {
+footer,
+[data-testid="stDecoration"],
+[data-testid="stToolbar"] {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
@@ -33,10 +48,11 @@ footer {
     position: absolute !important;
     left: -9999px !important;
     top: -9999px !important;
+    z-index: -9999 !important;
 }
 </style>
 """
-st.markdown(hide_all_streamlit_branding, unsafe_allow_html=True)
+st.markdown(hide_streamlit_branding, unsafe_allow_html=True)
 
 
 # ===================== 全局配置 =====================
@@ -172,7 +188,7 @@ def get_ma(row):
 # ===================== 手机APP界面 =====================
 def main():
     st.set_page_config(page_title="股票分析", page_icon="📈")
-    st.title("📈 金融指标股票分析111111")
+    st.title("📈 金融指标股票分析222222")
     st.divider()
 
     stock_code = st.text_input("请输入6位股票代码", value="603629")
