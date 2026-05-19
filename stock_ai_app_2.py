@@ -9,31 +9,33 @@ import streamlit as st
 
 st.set_page_config(page_title="金融指标股票分析", layout="wide")
 
-# 注入隐藏所有 Streamlit 品牌元素的 CSS
-hide_streamlit_ui = """
+# 隐藏 Streamlit 右下角的两个品牌元素（H图标 + 皇冠）
+hide_streamlit_branding = """
 <style>
-/* 隐藏右上角菜单 */
-#MainMenu {visibility: hidden;}
-/* 隐藏底部 Made with Streamlit */
-footer {visibility: hidden;}
-/* 隐藏右下角的 Streamlit 品牌按钮/皇冠 */
-.stApp > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(4) > div:nth-child(2) {
-    display: none !important;
-}
-/* 隐藏 iframe 里的所有右下角固定元素 */
-iframe + div,
-[data-testid="stDecoration"],
-[data-testid="stToolbar"],
-._profileContainer,
-._viewerBadge {
+/* 隐藏左侧 H 图标 */
+._profileContainer_gzau3_53 {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
     pointer-events: none !important;
 }
+
+/* 隐藏右侧皇冠/升级按钮 */
+._viewerBadge_nim44_23 {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* 额外兜底：隐藏所有可能的 Streamlit 品牌元素 */
+#MainMenu, footer, [data-testid="stDecoration"], [data-testid="stToolbar"] {
+    visibility: hidden !important;
+    display: none !important;
+}
 </style>
 """
-st.markdown(hide_streamlit_ui, unsafe_allow_html=True)
+st.markdown(hide_streamlit_branding, unsafe_allow_html=True)
 
 
 # ===================== 全局配置 =====================
