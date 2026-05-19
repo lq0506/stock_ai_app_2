@@ -170,7 +170,7 @@ def get_ma(row):
 # ===================== 手机APP界面 =====================
 def main():
     st.set_page_config(page_title="股票分析", page_icon="📈")
-    st.title("📈 金融指标股票分析33333")
+    st.title("📈 金融指标股票分析")
     st.divider()
 
     stock_code = st.text_input("请输入6位股票代码", value="603629")
