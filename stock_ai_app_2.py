@@ -9,83 +9,32 @@ import streamlit as st
 
 st.set_page_config(page_title="金融指标股票分析", layout="wide")
 
-# 针对你截图里的两个类名，全方位封杀
-hide_branding = """
+st.markdown("""
 <style>
-/* 1. 针对右边皇冠按钮：.viewerBadge_nim44_23 */
-._container_gzau3_1._viewerBadge_nim44_23,
-a[class*="_viewerBadge_nim44_23"] {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-    position: absolute !important;
-    right: -9999px !important;
-    bottom: -9999px !important;
-    transform: scale(0) !important;
-    z-index: -9999 !important;
-    width: 0 !important;
-    height: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-}
-
-/* 2. 针对左边H图标：.profileContainer_gzau3_53 */
+/* 直接锁定你这两个图标 */
 ._profileContainer_gzau3_53,
-div[class*="_profileContainer_gzau3_53"] {
+._container_gzau3_1._viewerBadge_nim44_23 {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
     pointer-events: none !important;
+    height: 0px !important;
+    width: 0px !important;
+    overflow: hidden !important;
     position: absolute !important;
-    right: -9999px !important;
-    bottom: -9999px !important;
-    transform: scale(0) !important;
-    z-index: -9999 !important;
-    width: 0 !important;
-    height: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-}
-
-/* 3. 兜底：隐藏所有可能的父容器 */
-div:has(> ._profileContainer_gzau3_53),
-div:has(> ._container_gzau3_1._viewerBadge_nim44_23) {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-}
-
-/* 4. 额外隐藏 Streamlit 自带的所有其他品牌元素 */
-#MainMenu, footer, [data-testid="stDecoration"], [data-testid="stToolbar"] {
-    visibility: hidden !important;
-    display: none !important;
+    left: -9999px !important;
 }
 </style>
 
 <script>
-// 动态删除这两个元素，防止 CSS 被覆盖
-function removeBadges() {
-    // 删除皇冠按钮
-    const badge = document.querySelector('._container_gzau3_1._viewerBadge_nim44_23');
-    if (badge) badge.remove();
-
-    // 删除H图标
-    const profile = document.querySelector('._profileContainer_gzau3_53');
-    if (profile) profile.remove();
-}
-
-// 页面加载后立即执行
-window.addEventListener('load', removeBadges);
-// 每隔100ms检查一次，防止元素被重新生成
-setInterval(removeBadges, 100);
+// 重点：等页面完全渲染完再删！！！
+// 并且持续删，删到死，防止重新出现
+setInterval(() => {
+    let items = document.querySelectorAll('._profileContainer_gzau3_53, ._container_gzau3_1._viewerBadge_nim44_23');
+    items.forEach(i => i.remove());
+}, 100)
 </script>
-"""
-
-st.markdown(hide_branding, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 
 # ===================== 全局配置 =====================
