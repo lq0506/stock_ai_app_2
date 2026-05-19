@@ -7,40 +7,33 @@ from sklearn.preprocessing import StandardScaler
 from datetime import datetime
 import streamlit as st
 
-# 全局隐藏所有右下角多余元素 + 顶部默认菜单
-hide_streamlit_style = """
-<style>
-/* 隐藏右下角运行提示水印 */
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-/* 隐藏右下角部署、关于按钮 */
-.stDeployButton {display:none !important;}
-/* 隐藏右下角问号帮助图标 */
-.stHelpButton {display:none !important;}
-/* 隐藏右下角设置三点菜单 */
-.stActionButton {display:none !important;}
-/* 彻底移除所有侧边残留、底部留白 */
-.viewerBadge_container {display:none !important;}
-.css-164nlkn {display:none !important;}
+st.set_page_config(page_title="金融指标股票分析", layout="wide")
 
-/* 强制隐藏所有 Median 自带的悬浮按钮、水印、皇冠 */
-div[class*="median-"],
-div[id*="median-"],
-div[class*="floating"],
-div[class*="premium"],
-div[class*="badge"],
-div[class*="watermark"] {
+# 注入隐藏所有 Streamlit 品牌元素的 CSS
+hide_streamlit_ui = """
+<style>
+/* 隐藏右上角菜单 */
+#MainMenu {visibility: hidden;}
+/* 隐藏底部 Made with Streamlit */
+footer {visibility: hidden;}
+/* 隐藏右下角的 Streamlit 品牌按钮/皇冠 */
+.stApp > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(4) > div:nth-child(2) {
     display: none !important;
+}
+/* 隐藏 iframe 里的所有右下角固定元素 */
+iframe + div,
+[data-testid="stDecoration"],
+[data-testid="stToolbar"],
+._profileContainer,
+._viewerBadge {
+    display: none !important;
+    visibility: hidden !important;
     opacity: 0 !important;
     pointer-events: none !important;
-    position: absolute !important;
-    width: 0 !important;
-    height: 0 !important;
-    overflow: hidden !important;
 }
 </style>
 """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+st.markdown(hide_streamlit_ui, unsafe_allow_html=True)
 
 
 # ===================== 全局配置 =====================
