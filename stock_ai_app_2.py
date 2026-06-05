@@ -291,7 +291,7 @@ class CNNLSTM(nn.Module):
         out = lstm_out[:, -1, :]
         return self.sigmoid(self.fc_up(out)), self.sigmoid(self.fc_in(out))
 
-# ===================== 核心运行（优化日志排版格式） =====================
+# ===================== 核心运行（手机端优化排版） =====================
 def run_analysis(stock_code, run_wfo):
     global is_running
     add_log_bg("# 🔍 正在深度量化分析股票数据\n> 模型运算耗时较长，请勿重复点击，等待测算完成\n")
@@ -449,46 +449,49 @@ def run_analysis(stock_code, run_wfo):
     price_level = calc_price_levels(df_result, PRICE_LOOKBACK)
     latest = df_result.iloc[-1]
 
-    # ========== 排版优化：1.近期行情表格 ==========
+    # ========== 手机优化1：精简表头+pipe自适应表格 ==========
     add_log_bg("## 📊 近期行情与全指标状态")
     show_df = df_result.tail(10)[["date","ret","MA趋势","KDJ","RSI","MACD","EXPMA状态","资金状态","prob_up"]].copy()
     show_df["ret"] = show_df["ret"].apply(lambda x: f"{x:.2%}")
     show_df["prob_up"] = show_df["prob_up"].apply(lambda x: f"{x:.2%}")
-    add_log_bg(show_df.to_markdown(index=False))
+    # 超短列名，手机竖屏无横向滚动
+    show_df.columns = ["日期","涨跌","MA","KDJ","RSI","MACD","EXPMA","资金","明日胜率"]
+    add_log_bg(show_df.to_markdown(index=False, tablefmt="pipe"))
     add_log_bg("---")
 
-    # ========== 2.最新指标总结卡片 ==========
+    # ========== 手机优化2：精简总结表格 ==========
     add_log_bg("## 📋 最新综合指标结论")
     add_log_bg(f"""
 | 项目 | 详情 |
 | ---- | ---- |
 | 交易日 | {latest['date']} |
-| 当前现价 | {price_level['close']:.2f} 元 |
-| MA趋势 | {latest['MA趋势']} |
-| KDJ状态 | {latest['KDJ']} |
-| RSI状态 | {latest['RSI']} |
-| MACD信号 | {latest['MACD']} |
-| EXPMA形态 | {latest['EXPMA状态']} |
-| 资金流向 | {latest['资金状态']} |
-| 综合打分 | {latest['indicator_score']:.2f} |
-| 明日上涨胜率 | **{latest['prob_up']:.2%}** |
+| 现价(元) | {price_level['close']:.2f} |
+| MA | {latest['MA趋势']} |
+| KDJ | {latest['KDJ']} |
+| RSI | {latest['RSI']} |
+| MACD | {latest['MACD']} |
+| EXPMA | {latest['EXPMA状态']} |
+| 资金 | {latest['资金状态']} |
+| 综合分 | {latest['indicator_score']:.2f} |
+| 明日胜率 | **{latest['prob_up']:.2%}** |
 """)
     add_log_bg("---")
 
-    # ==========3.买卖点位卡片 ==========
+    # ========== 手机优化3：点位短句分行 ==========
     add_log_bg("## 🎯 动态买卖参考点位")
     add_log_bg(f"""
-- 🟢 **最佳低吸介入价：{price_level['best_buy']} 元**
-- 🟡 **强支撑位：{price_level['support']} 元**
-- 🔴 **短线压力位：{price_level['pressure']} 元**
-- 🔵 **中长线波段压力：{price_level['pressure_long']} 元**
-- 🟠 **减仓/止盈参考价：{price_level['sell_ref']} 元**
-- ⛔ **硬性止损价位：{price_level['stop_loss']} 元**
+- 🟢 低吸价：{price_level['best_buy']} 元
+- 🟡 支撑位：{price_level['support']} 元
+- 🔴 短线压力：{price_level['pressure']} 元
+- 🔵 长线压力：{price_level['pressure_long']} 元
+- 🟠 止盈参考：{price_level['sell_ref']} 元
+- ⛔ 止损价位：{price_level['stop_loss']} 元
 """)
     add_log_bg("---")
 
-    # ==========4.综合研判主区块 ==========
-    add_log_bg("# 📈【综合研判 · 概率+指标+EXPMA多周期+资金 联合策略】")
+    # ========== 手机优化4：大标题拆分换行，避免文字截断 ==========
+    add_log_bg("# 📈综合研判")
+    add_log_bg("### 概率+指标+EXPMA多周期+资金联合策略")
     prob = latest["prob_up"]
     fund_status = latest["资金状态"]
     kdj_status = latest["KDJ"]
@@ -625,9 +628,14 @@ def run_analysis(stock_code, run_wfo):
         os.remove(MODEL_FILE)
     is_running = False
 
-# ===================== Streamlit主线程UI =====================
+# ===================== Streamlit全局手机自适应配置 =====================
 if __name__ == "__main__":
-    st.set_page_config(page_title="澄渊投策・智能量化研判系统", layout="wide")
+    # 手机自适应关键配置
+    st.set_page_config(
+        page_title="澄渊投策・智能量化研判系统",
+        layout="wide",
+        initial_sidebar_state="auto"
+    )
     st.title("澄渊投策 · 智能量化研判系统")
     with st.sidebar:
         stock_input = st.text_input("输入6位股票代码", value="601138")
